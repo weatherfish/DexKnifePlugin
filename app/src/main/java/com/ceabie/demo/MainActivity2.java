@@ -4,14 +4,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
-
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity2 extends AppCompatActivity {
 
     private TextView mViewById;
     private long mMillis;
@@ -25,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_save_photo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int dfg = 1211111111;
+                int dfg = 12111111;
                 Observable.just(1, 2, dfg)
                         .map(new Func1<Integer, Integer>() {
                             @Override

@@ -17,9 +17,10 @@ package com.ceabie.dexknife
 
 import com.android.build.api.transform.Format
 import com.android.build.api.transform.Transform
+import com.android.build.gradle.api.ApplicationVariant
+import com.android.build.gradle.internal.incremental.InstantRunBuildContext
 import com.android.build.gradle.internal.pipeline.TransformTask
 import com.android.build.gradle.internal.transforms.DexTransform
-import com.android.builder.Version
 import org.gradle.api.Project
 
 /**
@@ -37,7 +38,12 @@ public class SplitToolsFor150 extends DexSplitTools {
         return true;
     }
 
-    public static void processSplitDex(Project project, Object variant) {
+    public static void processSplitDex(Project project, ApplicationVariant variant) {
+        if (isInInstantRunMode(variant)) {
+            System.err.println("DexKnife: Instant Run mode, DexKnife is auto disabled!")
+            return
+        }
+
         TransformTask dexTask
 //        TransformTask proGuardTask
         TransformTask jarMergingTask
@@ -55,9 +61,9 @@ public class SplitToolsFor150 extends DexSplitTools {
 //            if (minifyEnabled && "proguard".equals(transformName)) { // ProGuardTransform
 //                proGuardTask = theTask
 //            } else
-            if (!minifyEnabled && "jarMerging".equals(transformName)) {
+            if ("jarMerging".equalsIgnoreCase(transformName)) {
                 jarMergingTask = theTask
-            } else if ("dex".equals(transformName)) { // DexTransform
+            } else if ("dex".equalsIgnoreCase(transformName)) { // DexTransform
                 dexTask = theTask
             }
         }
@@ -72,6 +78,8 @@ public class SplitToolsFor150 extends DexSplitTools {
                 File mappingFile = variant.mappingFile
                 DexTransform dexTransform = it.transform
                 File fileAdtMainList = dexTransform.mainDexListFile
+
+                println("DexKnife Adt Main: " + fileAdtMainList)
 
                 DexKnifeConfig dexKnifeConfig = getDexKnifeConfig(project)
 
@@ -94,8 +102,13 @@ public class SplitToolsFor150 extends DexSplitTools {
                 if (processMainDexList(project, minifyEnabled, mappingFile, mergedJar,
                         fileAdtMainList, dexKnifeConfig)) {
 
+                    int version = getAndroidPluginVersion(getAndroidGradlePluginVersion())
+                    println("DexKnife: AndroidPluginVersion: " + version)
+
+                    // after 2.2.0, it can additionalParameters, but it is a copy in task
+
                     // 替换 AndroidBuilder
-                    MultiDexAndroidBuilder.proxyAndroidBuilder(dexTransform,
+                    InjectAndroidBuilder.proxyAndroidBuilder(dexTransform,
                             dexKnifeConfig.additionalParameters)
 
                     // 替换这个文件
@@ -109,5 +122,16 @@ public class SplitToolsFor150 extends DexSplitTools {
                 endDexKnife()
             }
         }
+    }
+
+    private static boolean isInInstantRunMode(Object variant) {
+        try {
+            def scope = variant.getVariantData().getScope()
+            InstantRunBuildContext instantRunBuildContext = scope.getInstantRunBuildContext()
+            return instantRunBuildContext.isInInstantRunMode()
+        } catch (Throwable e) {
+        }
+
+        return false
     }
 }
