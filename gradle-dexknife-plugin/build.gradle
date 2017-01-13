@@ -85,26 +85,26 @@ publishing {
     }
 }
 
-bintray {
-    user = bintrayUser
-    key = bintrayApiKey
-
-    publications = ['mavenJava']
-    pkg {
-        repo = 'gradle-plugins'
-        name = 'gradle-dexknife-plugin'
-        labels = ['gradle', 'plugin', 'dex', 'split sex', 'multidex']
-        websiteUrl = POM_URL
-        vcsUrl = POM_URL + '.git'
-        issueTrackerUrl = POM_URL + '/issues'
-        licenses = ["Apache-2.0"]
-        version {
-            name = "${PUBLIC_VERSION}"
-            attributes = ['gradle-plugin': 'com.ceabie.dextools:gradle-dexknife-plugin']
-        }
-    }
-    publish = true
-}
+//bintray {
+//    user = bintrayUser
+//    key = bintrayApiKey
+//
+//    publications = ['mavenJava']
+//    pkg {
+//        repo = 'gradle-plugins'
+//        name = 'gradle-dexknife-plugin'
+//        labels = ['gradle', 'plugin', 'dex', 'split sex', 'multidex']
+//        websiteUrl = POM_URL
+//        vcsUrl = POM_URL + '.git'
+//        issueTrackerUrl = POM_URL + '/issues'
+//        licenses = ["Apache-2.0"]
+//        version {
+//            name = "${PUBLIC_VERSION}"
+//            attributes = ['gradle-plugin': 'com.ceabie.dextools:gradle-dexknife-plugin']
+//        }
+//    }
+//    publish = true
+//}
 
 task sourcesJar(type: Jar) {
     from sourceSets.main.allSource

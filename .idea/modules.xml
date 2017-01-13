@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/DexKnifePlugin.iml" filepath="$PROJECT_DIR$/DexKnifePlugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gradle-dexknife-plugin/gradle-dexknife-plugin.iml" filepath="$PROJECT_DIR$/gradle-dexknife-plugin/gradle-dexknife-plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/lib1/lib1.iml" filepath="$PROJECT_DIR$/lib1/lib1.iml" />
     </modules>
   </component>
