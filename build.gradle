@@ -12,10 +12,14 @@ buildscript {
 =======
         classpath 'com.android.tools.build:gradle:2.2.0'
 <<<<<<< HEAD
+<<<<<<< HEAD
         classpath 'com.ceabie.dextools:gradle-dexknife-plugin:1.5.7'
 >>>>>>> ceabie/master
 =======
         classpath 'com.ceabie.dextools:gradle-dexknife-plugin:1.5.9'
+>>>>>>> ceabie/master
+=======
+        classpath 'com.ceabie.dextools:gradle-dexknife-plugin:1.6.0'
 >>>>>>> ceabie/master
     }
 }

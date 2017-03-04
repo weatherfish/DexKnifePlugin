@@ -12,6 +12,7 @@ Solve android studio enable the native multidex feature, but there will be too m
 It will auto enable when disabled instant-run or in packaging release.**
 
 ###Update Log
+    1.6.0: Modify: When only -keep is configured, only keep the specified classes.
     1.5.9: Compatible with some ancient version of gradle and android gradle plugin.
     1.5.8: Compatible with gradle 3.2, fixed use of only support-split and support-keep resulting in an extra large number of classes.
     1.5.7: fixed support-split and support-keep are not work. (修复support-split/support-keep无效的bug)
@@ -39,22 +40,21 @@ It will auto enable when disabled instant-run or in packaging release.**
 7. If you use the android gradle plugin's native multidex, but the declaration in the manifest is too much, resulting in the number of methods and variables are still overflow, or can not be packaged. You can simply use -suggest-split to move some of the classes in the suggest list out of the main dex.
 
 ###Usage
-1. In your project's build.gradle, buildscript.
+1.In your project's build.gradle, buildscript.
 
-    buildscript {
-            ....
-
-        dependencies {
-            ....
-            classpath 'com.android.tools.build:gradle:2.2.0'  // or other
-            classpath 'com.ceabie.dextools:gradle-dexknife-plugin:1.5.9'
+        buildscript {
+                ....
+            dependencies {
+                ....
+                classpath 'com.android.tools.build:gradle:2.2.0'  // or other
+                classpath 'com.ceabie.dextools:gradle-dexknife-plugin:1.6.0'
+            }
         }
-    }
 
 **please make sure gradle version is compatible with the android gradle plugin, otherwise it can causes some sync error, such as:<br />
 Gradle sync failed: Unable to load class 'com.android.builder.core.EvaluationErrorReporter'.**
 
-2. Create a 'dexknife.txt' in your App's module, and config the patterns of classes path that wants to put into sencond dex.<br />
+2.Create a 'dexknife.txt' in your App's module, and config the patterns of classes path that wants to put into sencond dex.<br />
 (The rest of any classes that is not marked split will be in miandexlist)
 
         Patterns may include:
@@ -66,8 +66,6 @@ Gradle sync failed: Unable to load class 'com.android.builder.core.EvaluationErr
         Patterns ending with '.' or '/' will have '**' automatically appended.
 
 Also see: https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/util/PatternFilterable.html <br />
-
-**Note: if you want to filter the inner classes, use $\*, such as: SomeClass$\*.class <br />**
 
 Other config key:
 
@@ -101,13 +99,18 @@ Other config key:
 
     # log the filter classes of suggest maindexlist, if -filter-suggest is enabled..
     -log-filter-suggest
-    
+
+    #the filter log。Recommend；Global；true；false
+    -log-filter
+
     # if you only filter the suggest maindexlist, use -suggest-split and -suggest-keep.
     # Global filter will merge into them if -filter-suggest is ENABLE at same time.
     -suggest-split **.MainActivity2.class
     -suggest-keep android.support.multidex.**
-    
-3. add to your app's build.gradle, add this line:
+
+**Note: if you want to filter the inner classes, use $\*, such as: SomeClass$\*.class <br />**
+
+3.add to your app's build.gradle, add this line:
 
     apply plugin: 'com.ceabie.dexnkife'
 
@@ -117,7 +120,7 @@ and then, set your app
 
    - **Notes: You want to set 'multiDexEnabled true' in 'defaultConfig' or 'buildTypes', otherwise ineffective.**
 
-4. run your app
+4.run your app
 
 # DexKnife（中文）
 
@@ -128,6 +131,7 @@ and then, set your app
 - **注意：由于高于 2.0.0 的 instant-run 特性与 multidex不兼容，DexKnife会暂时禁用。当instant-run被禁用或者release打包时会自动启用。**
 
 ###更新日志
+    1.6.0: 修改：当只有keep时，只保留keep指定的类
     1.5.9: 兼容一些古老的 gradle 和 android gradle plugin版本
     1.5.8: 兼容gradle 3.2，修复当只使用support-split/support-keep时出现大量的额外类
     1.5.7: 修复support-split/support-keep无效的bug
@@ -156,22 +160,21 @@ and then, set your app
 
 
 ###使用方法
-1. 在你的工程的 build.gradle 中 buildscript:
+1.在你的工程的 build.gradle 中 buildscript:
 
-    buildscript {
-            ....
-
-        dependencies {
-            ....
-            classpath 'com.android.tools.build:gradle:2.2.0'  // or other
-            classpath 'com.ceabie.dextools:gradle-dexknife-plugin:1.5.9'
+        buildscript {
+                ....
+            dependencies {
+                ....
+                classpath 'com.android.tools.build:gradle:2.2.0'  // or other
+                classpath 'com.ceabie.dextools:gradle-dexknife-plugin:1.6.0'
+            }
         }
-    }
 
  **注意，请确保使用的gradle版本和android gradle plugin兼容，否则会出现同步错误，例如：<br />
       Gradle sync failed: Unable to load class 'com.android.builder.core.EvaluationErrorReporter'.**
 
-2. 在App模块下创建 dexknife.txt，并填写要放到第二个dex中的包名路径的通配符.（注意，其余任何未被注明split的类都会在miandexlist）
+2.在App模块下创建 dexknife.txt，并填写要放到第二个dex中的包名路径的通配符.（注意，其余任何未被注明split的类都会在miandexlist）
 
         Patterns may include:
 
@@ -183,20 +186,17 @@ and then, set your app
 
 更多参见: https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/util/PatternFilterable.html <br />
 
-**注意:** <br />
-1. **过滤的类路径使用非混淆的。**<br />
-2. 特别注意：使用全局split(或不加，也当做排除的)，**仅仅只有配置了split的类才会被移出maindex，未标注的剩余类都会保留在maindex中**。建议使用suggest-split排除ADT建议的类。<br />
-3. 如果你要过滤内部类, 使用$\*，例如: SomeClass$\*.class。
 
 其他配置：
 
     使用 # 进行注释, 当行起始加上 #, 这行配置被禁用.
 
     # 全局过滤, 如果没设置 -filter-suggest 并不会应用到 建议的maindexlist.
-    # 如果你想要某个包路径在maindex中，则使用 -keep 选项，即使他已经在分包的路径中.
+    # 如果你想要某个已被排除的包路径在maindex中，则使用 -keep 选项，即使他已经在分包的路径中.
+    # 注意，没有split只用keep时，miandexlist将仅包含keep指定的类。
     -keep android.support.v4.view.**
 
-    # 这条配置可以指定这个包下类在第二dex中.
+    # 这条配置可以指定这个包下类在第二dex中.（注意，未指定的类会在被认为在maindexlist中）
     android.support.v?.**
 
     # 使用.class后缀，代表单个类.
@@ -217,13 +217,24 @@ and then, set your app
 
     # 显示miandex的日志.
     -log-mainlist
-    
+
+    #过滤日志。Recommend：在maindexlist中（由推荐列表确定）；Global：在maindexlist中，由全局过滤确定；true，前两者都成立的；false，不在maindexlist中
+    -log-filter
+
     # 如果你只想过滤 建议的maindexlist, 使用 -suggest-split 和 -suggest-keep.
     # 如果同时启用 -filter-suggest, 全局过滤会合并到它们中.
     -suggest-split **.MainActivity2.class
     -suggest-keep android.support.multidex.**
 
-3. 在你的App模块的build.gradle 增加：
+**注意:** <br />
+1. **过滤的类路径使用非混淆的。**<br />
+2. 使用全局split(或不加，也当做排除的)，**仅仅只有指定了split的类才会被移出maindex，未标注的剩余类都会保留在maindex中**。如果**只使用keep**，那只有被keep的类会在maindexlist。配置不当会，会出现未指定过的类。<br />
+3. suggest-split与suggest-keep规则如同 第2条。<br />
+4. 如果使用了全局过滤，又使用了suggest-xxx，那么只要其中一个结果成立，那么这个类都会maindexlist中。建议仅使用suggest-split对ADT推荐的列表进行再过滤。<br />
+5. 如果你要过滤内部类, 使用$\*，例如: SomeClass$\*.class。
+
+
+3.在你的App模块的build.gradle 增加：
 
     apply plugin: 'com.ceabie.dexnkife'
 
@@ -233,7 +244,11 @@ and then, set your app
 
    - **注意：要在 defaultConfig 或者 buildTypes中打开 multiDexEnabled true，否则不起作用。**
 
-4. 编译你的应用
+4.编译你的应用
+
+### 调试
+在Terminal中运行 gradleDebug。具体参见：http://blog.csdn.net/ceabie/article/details/55271161
+
 
 ## License
 
